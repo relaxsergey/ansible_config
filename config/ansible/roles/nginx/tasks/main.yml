@@ -1,0 +1,47 @@
+---
+  - name: install
+    apt:
+      name: nginx-full
+      state: latest
+      update_cache: yes
+    notify:
+      - start nginx
+
+  - name: disable the default site
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+    notify:
+      - restart nginx
+
+  - name: create www directory
+    file:
+      path: "{{ www_dir }}"
+      state: directory
+      owner: "{{deploy_user}}"
+      group: "{{deploy_user}}"
+      mode: 0775
+
+  - name: create www directory
+    file:
+      path: "{{ www_dir }}/shared/log"
+      state: directory
+      owner: "{{deploy_user}}"
+      group: "{{deploy_user}}"
+      mode: 0775
+
+  - name: create configuration
+    template:
+      src: nginx.conf
+      dest: /etc/nginx/nginx.conf
+      mode: 0644
+    notify:
+      - restart nginx
+
+  - name: create host configuration
+    template:
+      src: "host"
+      dest: "/etc/nginx/sites-enabled/{{ server_name }}"
+      mode: 0644
+    notify:
+      - restart nginx

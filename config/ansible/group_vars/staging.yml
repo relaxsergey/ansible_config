@@ -1,0 +1,14 @@
+---
+
+# Init Role (required) --------------------------------------------------------
+
+hostname:  # "astra.stanton-lab.net"  ## Set host name
+
+# nginx -----------------------------------------------------------------------
+server_name: # "astra.stanton-lab.net"  ## Set server name
+
+# Redis ----------------------------------------------------------
+
+redis_bind: 127.0.0.1
+
+rails_environment: staging

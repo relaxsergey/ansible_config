@@ -1,0 +1,16 @@
+---
+  - name: install
+    apt:
+      name: monit
+      state: latest
+      update_cache: yes
+    notify:
+      - start monit
+
+  - name: create configuration for monit
+    template:
+      src: monitrc
+      dest: /etc/monit/monitrc
+      mode: 0700
+    notify:
+      - restart monit

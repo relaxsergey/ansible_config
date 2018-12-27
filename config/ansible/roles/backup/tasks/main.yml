@@ -1,0 +1,4 @@
+---
+- name: Install backup gem
+  command: "/home/{{ deploy_user }}/.rvm/bin/rvm @global do gem install backup"
+  tags: backup

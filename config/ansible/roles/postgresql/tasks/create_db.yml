@@ -1,0 +1,18 @@
+- name: create a new database
+  postgresql_db:
+    name: "{{ postgresql.dbname }}"
+    encoding: 'UTF-8'
+    state: present
+  become: true
+  become_user: postgres
+
+- name: create a user
+  postgresql_user:
+    db: "{{ postgresql.dbname }}"
+    name: "{{ postgresql.user }}"
+    password: "{{ postgresql.password }}"
+    priv: "ALL"
+    role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
+    state: present
+  become: true
+  become_user: postgres

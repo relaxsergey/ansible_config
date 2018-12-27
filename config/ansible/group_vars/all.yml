@@ -1,0 +1,56 @@
+---
+
+# Init Role (required) --------------------------------------------------------
+
+timezone: "Europe/Kiev"
+deployer_password: # "Amalgama1213"  ## Set password
+ssh_keys:
+  - "{{ lookup('file', 'keys/ssh_public_key.pub') }}"
+
+
+# nginx -----------------------------------------------------------------------
+
+deploy_user: # "deploy"  ## Set user name
+application_name: # 'astra'  ## Set app name
+www_dir: "/home/{{ deploy_user }}/apps/{{ application_name }}"
+release_path: '{{www_dir}}/current'
+log_path: '{{www_dir}}/shared/log'
+
+
+
+# PostgresSQL ----------------------------------------------------------
+
+postgresql:
+  version: 9.6
+  port: 5432
+  user: "{{deploy_user}}"
+  password: # "3df0ce6b99f657f9"   ##  Set password # deployer
+  dbname: # "astra"  ## Set DB name
+
+postgresql_authentication:
+  - type: 'host'
+    user: "{{postgresql.user}}"
+    method: trust
+    database: 'all'
+    address: '127.0.0.1/32'
+
+postgresql_listen_addresses:
+  - localhost
+
+# Monit ----------------------------------------------------------
+monit:
+  port: 3737
+  username: # admin  ## Set user name
+  password: # room1007  ## Set password
+
+# RVM -------------------------------------------------------------------------
+
+## change ruby version , gemset name
+# rvm: '/home/{{deploy_user}}/.rvm/bin/rvm ruby-2.3.1@astra --create do'
+
+# Firewall ----------------------------------------------------------
+
+firewall_allowed_tcp_ports:
+  - '22'
+  - '80'
+  - "{{ monit.port }}"

@@ -1,0 +1,74 @@
+- name: rename host
+  hostname:
+    name: "{{ hostname }}"
+- name: add host to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.1 {{ hostname }}"
+    state: present
+
+- name: set timezone variables
+  copy:
+    content: "{{ timezone }}"
+    dest: /etc/timezone
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify:
+    - update timezone
+
+- name: update apt cache
+  apt: update_cache=yes
+
+- name: install or upgrade required packages
+  apt: name={{ item }} state=latest
+  with_items:
+    - build-essential
+    - curl
+    - git
+    - htop
+    - mc
+    - most
+    - openssh-server
+    - vim
+    - wget
+    - nodejs
+    - libgmp-dev
+    - imagemagick
+    - libmagickcore-dev
+    - libmagickwand-dev
+    - libpq-dev
+    - opendkim
+    - opendkim-tools
+    - python-pip
+
+- name: create swapfile
+  command: fallocate -l 4G /swapfile
+  args:
+    creates: /swapfile
+  register: swapfile
+
+- name: set swapfile permissions
+  file:
+    path: /swapfile
+    mode: 600
+    owner: root
+    group: root
+  when: swapfile.changed
+
+- name: setup swapfile
+  command: mkswap /swapfile
+  register: mkswap_swapfile
+  when: swapfile.changed
+
+- name: enable swapfile
+  command: swapon /swapfile
+  when: mkswap_swapfile.changed
+
+- name: add swapfile to /etc/fstab
+  lineinfile:
+    dest: /etc/fstab
+    line: "/swapfile none swap sw 0 0"
+    state: present
+  when: swapfile.changed

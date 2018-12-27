@@ -1,0 +1,15 @@
+---
+
+# Init Role (required) --------------------------------------------------------
+
+hostname: # "woobra.com"  ## Set host name
+
+# nginx -----------------------------------------------------------------------
+
+server_name: # "woobra.com"  ## Set server name
+
+# Redis -----------------------------------------------------------------------
+
+redis_bind: 127.0.0.1
+
+rails_environment: production
